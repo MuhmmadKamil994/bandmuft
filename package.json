@@ -1,0 +1,1 @@
+{"description":"BandMuft — free IELTS mock test platform for Pakistani students","name":"bandmuft","private":true,"scripts":{"dev:api":"npm run dev --workspace=api","dev:web":"npm run dev --workspace=web"},"version":"0.1.0","workspaces":["web","api"]}

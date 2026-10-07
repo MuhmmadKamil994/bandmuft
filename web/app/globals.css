@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * BANDMUFT DESIGN TOKENS — LOCKED
+ * FYP wali ghalti dobara nahi: button ka rang har page par YAHIN se aayega.
+ * Koi page apne button ka rang khud nahi banayega — sirf neeche wale
+ * variants use honge: primary / secondary / danger / ghost.
+ * Naya rang chahiye to pehle yahan add karo, phir sab jagah aik jaisa lagega.
+ */
+:root {
+  --bm-navy: #0e2a47;
+  --bm-navy-dark: #0a1f36;
+  --bm-gold: #f5a623;
+  --bm-gold-dark: #d98e12;
+  --bm-paper: #faf7f1;
+  --bm-ink: #1a2332;
+  --bm-danger: #b91c1c;
+  --bm-success: #2e7d62;
+  --bm-disabled-bg: #c9cdd3;
+  --bm-disabled-text: #6b7280;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3
+      font-semibold text-base transition-all duration-150 select-none
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+  /* PRIMARY — sirf main action: "Start Free Mock", "Submit", "Verify" */
+  .btn-primary {
+    @apply btn bg-gold text-navy hover:bg-gold-dark focus-visible:ring-gold
+      active:scale-[0.98] shadow-sm;
+  }
+  /* SECONDARY — "Back", "Cancel" jaisi actions */
+  .btn-secondary {
+    @apply btn border-2 border-navy text-navy bg-transparent
+      hover:bg-navy hover:text-white focus-visible:ring-navy active:scale-[0.98];
+  }
+  /* DANGER — sirf delete/logout */
+  .btn-danger {
+    @apply btn text-white focus-visible:ring-red-500 active:scale-[0.98];
+    background-color: var(--bm-danger);
+  }
+  .btn-danger:hover { filter: brightness(1.1); }
+  /* GHOST — subtle actions */
+  .btn-ghost {
+    @apply btn text-navy hover:bg-navy/5 focus-visible:ring-navy;
+  }
+  /* DISABLED — hamesha same grey, har page par */
+  .btn:disabled, .btn-disabled {
+    background-color: var(--bm-disabled-bg) !important;
+    color: var(--bm-disabled-text) !important;
+    border-color: transparent !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .btn-block { @apply w-full; }
+  .btn-sm { @apply px-4 py-2 text-sm; }
+  .btn-lg { @apply px-8 py-4 text-lg; }
+
+  .input {
+    @apply w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-3 text-ink
+      placeholder:text-gray-400 focus:border-navy focus:outline-none transition-colors;
+  }
+  .input-error { @apply border-red-500; }
+  .label { @apply block text-sm font-semibold text-ink mb-1.5; }
+  .card { @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6; }
+}
+
+body {
+  background-color: var(--bm-paper);
+  color: var(--bm-ink);
+}
