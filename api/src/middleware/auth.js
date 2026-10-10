@@ -7,7 +7,11 @@ function cookieOpts() {
   return {
     httpOnly: true,
     secure: prod,          // sirf HTTPS par
-    sameSite: 'lax',
+    // Production mein frontend (vercel.app) aur backend (onrender.com) alag
+    // domains par hain — cross-origin cookies ke liye SameSite=None lazmi hai,
+    // warna browser cookie bhejta hi nahi aur login loop ban jata hai.
+    // (Render par NODE_ENV=production set hona chahiye.)
+    sameSite: prod ? 'none' : 'lax',
     path: '/',
   };
 }

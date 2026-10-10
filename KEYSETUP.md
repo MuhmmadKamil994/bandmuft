@@ -27,6 +27,9 @@ har aik add karo:
 | `RESEND_API_KEY` | resend.com → API Keys → Create API Key → `re_...` se shuru hoti hai |
 | `GEMINI_API_KEY` | Tumhare paas FYP wali hai — wohi paste karo |
 | `MAIL_FROM` | `BandMuft <onboarding@resend.dev>` (domain verify ke baad apni domain wali) |
+| `NODE_ENV` | `production` — **lazmi**: isi se login cookies cross-origin par kaam karti hain (`SameSite=None`) |
+| `ADMIN_EMAIL` | (optional) Admin ka email — seed chalane par ye user admin ban jayega |
+| `ADMIN_PASSWORD` | (optional) Admin ka password — sirf tab jab naya admin user banana ho |
 
 Random secret banane ki command (apne computer ke terminal mein):
 

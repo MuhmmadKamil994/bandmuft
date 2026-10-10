@@ -26,7 +26,12 @@ export default function Dashboard() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-extrabold">Welcome back, {user.name}</h1>
-        <button onClick={logout} className="btn-ghost btn-sm">Logout</button>
+        <div className="flex items-center gap-2">
+          {user.role === 'admin' && (
+            <a href="/admin" className="btn-secondary btn-sm">Admin panel</a>
+          )}
+          <button onClick={logout} className="btn-ghost btn-sm">Logout</button>
+        </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="card">

@@ -13,7 +13,6 @@ const app = express();
 app.use(helmet());
 
 // CORS — sirf apna frontend
-console.log('>>> CORS origins:', (process.env.WEB_URL || 'http://localhost:3000').split(','));
 app.use(cors({
   origin: (process.env.WEB_URL || 'http://localhost:3000').split(','),
   credentials: true,
@@ -36,6 +35,7 @@ app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/tests', require('./routes/tests'));
 app.use('/api/v1/writing', require('./routes/writing'));
 app.use('/api/v1/certificates', require('./routes/certificates'));
+app.use('/api/v1/admin', require('./routes/admin'));
 
 app.use(notFound);
 app.use(errorHandler);

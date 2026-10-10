@@ -159,6 +159,28 @@ async function main() {
   }
   console.log(`Seeded ${prompts.length} writing prompts`);
 
+  // Admin user — ADMIN_EMAIL + ADMIN_PASSWORD env vars se (optional).
+  // Pehle se maujood user ho to sirf role=admin kar dega.
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    const User = require('./models/User');
+    const email = process.env.ADMIN_EMAIL.toLowerCase().trim();
+    let admin = await User.findOne({ email });
+    if (!admin) {
+      admin = new User({ name: 'Admin', email, isVerified: true, role: 'admin' });
+      await admin.setPassword(process.env.ADMIN_PASSWORD);
+      console.log(`Admin created: ${email}`);
+    } else if (admin.role !== 'admin') {
+      admin.role = 'admin';
+      admin.isVerified = true;
+      console.log(`Admin role granted: ${email}`);
+    } else {
+      console.log(`Admin already exists: ${email}`);
+    }
+    await admin.save();
+  } else {
+    console.log('ADMIN_EMAIL/ADMIN_PASSWORD not set — skipping admin seed');
+  }
+
   await mongoose.disconnect();
 }
 
