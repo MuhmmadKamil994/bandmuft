@@ -81,7 +81,7 @@ router.post('/register', authLimiter, validate(registerSchema), async (req, res,
 router.post('/verify-otp', authLimiter, validate(otpSchema), async (req, res, next) => {
   try {
     const { email, code } = req.body;
-    const user = await User.findOne({ email }).select('+otpHash +otpExpires +otpAttempts');
+    const user = await User.findOne({ email }).select('+otpHash +otpExpires +otpAttempts +refreshVersion')
     if (!user || !user.otpHash || !user.otpExpires || user.otpExpires < new Date()) {
       throw httpError(400, 'Code expired or invalid. Request a new one.');
     }
@@ -113,7 +113,7 @@ router.post('/resend-otp', authLimiter, validate(forgotSchema), async (req, res,
 router.post('/login', loginLimiter, validate(loginSchema), async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+refreshVersion');
     // Same message chahe email ghalat ho ya password — enumeration nahi
     if (!user || !(await user.checkPassword(password))) {
       throw httpError(401, 'Invalid credentials');
