@@ -1,57 +1,67 @@
 'use client';
 import { Suspense, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 
-function VerifyForm() {
+function OtpForm() {
+  const router = useRouter();
   const params = useSearchParams();
-  const [code, setCode] = useState(params.get('code') || '');
-  const [cert, setCert] = useState(null);
+  const email = params.get('email') || '';
+  const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [resent, setResent] = useState(false);
 
-  async function check(e) {
-    e?.preventDefault();
-    setBusy(true); setError(''); setCert(null);
+  async function verify(e) {
+    e.preventDefault();
+    const clean = code.trim();
+    if (!/^\d{6}$/.test(clean)) {
+      setError('Please enter the 6-digit code sent to your email.');
+      return;
+    }
+    setBusy(true); setError('');
     try {
-      const d = await api.get(`/certificates/verify/${code.trim()}`);
-      setCert(d.certificate);
-    } catch (err) { setError('Certificate not found. Check the code and try again.'); }
+      await api.post('/auth/verify-otp', { email, code: clean });
+      router.push('/dashboard');
+    } catch (err) { setError(err.message); }
     setBusy(false);
+  }
+
+  async function resend() {
+    setError(''); setResent(false);
+    try {
+      await api.post('/auth/resend-otp', { email });
+      setResent(true);
+    } catch (err) { setError(err.message); }
   }
 
   return (
     <div className="max-w-md mx-auto px-4 py-16">
       <div className="card">
-        <h1 className="text-2xl font-extrabold mb-1">Verify Certificate</h1>
-        <p className="text-sm text-gray-600 mb-6">Enter the certificate ID to check it is genuine.</p>
-        <form onSubmit={check}>
-          <Input label="Certificate ID (e.g. BM-2026-A1B2C3)" required
-            value={code} onChange={(e) => setCode(e.target.value)} />
+        <h1 className="text-2xl font-extrabold mb-1">Verify your email</h1>
+        <p className="text-sm text-gray-600 mb-6">
+          Enter the 6-digit code sent to{' '}
+          <span className="font-semibold">{email || 'your email'}</span>.
+        </p>
+        <form onSubmit={verify}>
+          <Input label="Verification code" required inputMode="numeric" maxLength={6}
+            placeholder="123456"
+            value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
           {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-          <Button block disabled={busy}>{busy ? 'Checking…' : 'Verify'}</Button>
+          {resent && <p className="text-sm text-green-600 mb-4">A new code was sent to your email.</p>}
+          <Button block disabled={busy}>{busy ? 'Verifying…' : 'Verify'}</Button>
         </form>
-        {cert && (
-          <div className="mt-6 rounded-xl bg-green-50 border border-green-200 p-5 text-center">
-            <p className="text-green-700 font-bold mb-3">✓ Genuine BandMuft certificate</p>
-            <p className="text-2xl font-extrabold">{cert.name}</p>
-            <p className="text-sm text-gray-600 mt-1">{cert.testTitle}</p>
-            <p className="text-4xl font-extrabold text-navy my-3">{cert.overallBand}</p>
-            <p className="text-sm text-gray-600">
-              Listening {cert.listeningBand} · Reading {cert.readingBand}
-            </p>
-            <p className="text-xs text-gray-500 mt-3">
-              Issued {new Date(cert.createdAt).toLocaleDateString()} · Mock assessment, not an official IELTS result.
-            </p>
-          </div>
-        )}
+        <p className="text-sm text-gray-600 mt-4 text-center">
+          Didn&apos;t get the code?{' '}
+          <button onClick={resend} className="font-semibold text-navy hover:underline">Resend</button>
+        </p>
       </div>
     </div>
   );
 }
 
 export default function Verify() {
-  return <Suspense><VerifyForm /></Suspense>;
+  return <Suspense><OtpForm /></Suspense>;
 }
