@@ -13,6 +13,7 @@ const app = express();
 app.use(helmet());
 
 // CORS — sirf apna frontend
+console.log('>>> CORS origins:', (process.env.WEB_URL || 'http://localhost:3000').split(','));
 app.use(cors({
   origin: (process.env.WEB_URL || 'http://localhost:3000').split(','),
   credentials: true,
