@@ -64,16 +64,16 @@ router.post('/register', authLimiter, validate(registerSchema), async (req, res,
   try {
     const { name, email, password } = req.body;
     const exists = await User.findOne({ email });
-    // User enumeration se bachao: registered ho ya na ho, same response
-    if (exists) {
-      if (!exists.isVerified) await issueOtp(exists);
-      return res.status(201).json({ ok: true, message: 'If this email is new, a code was sent.' });
-    }
-    const user = new User({ name, email });
+    if (exists) throw httpError(409, 'Email already registered');
+    // OTP verification FILHAAL OFF hai (Resend test mode ki wajah se emails
+    // sirf account owner ko jati hain). Account foran verified + logged in.
+    // Domain verify hone ke baad issueOtp wala purana flow wapas lagana hai —
+    // verify-otp / resend-otp endpoints mehfooz hain, sirf bypass ho rahe hain.
+    const user = new User({ name, email, isVerified: true });
     await user.setPassword(password);
     await user.save();
-    await issueOtp(user);
-    res.status(201).json({ ok: true, message: 'Account created. Verification code sent.' });
+    setSessionCookies(res, user);
+    res.status(201).json({ ok: true, user: user.toSafeJSON() });
   } catch (err) { next(err); }
 });
 
@@ -118,10 +118,8 @@ router.post('/login', loginLimiter, validate(loginSchema), async (req, res, next
     if (!user || !(await user.checkPassword(password))) {
       throw httpError(401, 'Invalid credentials');
     }
-    if (!user.isVerified) {
-      await issueOtp(user);
-      throw httpError(403, 'Email not verified. A new code was sent.');
-    }
+    // OTP verification off hai — isVerified check hataya gaya hai taake
+    // purane unverified users bhi atak na jayein.
     setSessionCookies(res, user);
     res.json({ ok: true, user: user.toSafeJSON() });
   } catch (err) { next(err); }

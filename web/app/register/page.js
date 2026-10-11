@@ -16,7 +16,8 @@ export default function Register() {
     setBusy(true); setError('');
     try {
       await api.post('/auth/register', form);
-      router.push(`/verify?email=${encodeURIComponent(form.email)}`);
+      // OTP off hai — register par seedha login ho jata hai
+      router.push('/dashboard');
     } catch (err) { setError(err.message); }
     setBusy(false);
   }
