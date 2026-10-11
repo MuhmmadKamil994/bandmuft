@@ -17,4 +17,7 @@ export const api = {
   get: (p) => req(p),
   post: (p, body) => req(p, { method: 'POST', body }),
   patch: (p, body) => req(p, { method: 'PATCH', body }),
+  del: (p) => req(p, { method: 'DELETE' }),
 };
+
+export const API_BASE = BASE;

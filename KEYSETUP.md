@@ -53,8 +53,16 @@ Save ke baad **Redeploy** karna — warna nayi value nahi lagegi.
 
 | Key | Kab chahiye |
 |---|---|
-| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Listening audio upload karte waqt (Cloudinary dashboard se) |
-| Listening `audioUrl` | Audio Cloudinary par upload kar ke URL `MockTest` document mein — seed dobara chalao ya MongoDB Compass se edit karo |
+| `CONTACT_TO` | (optional) Contact form ke messages kis email par ayen — khaali ho to `ADMIN_EMAIL` par jayenge. Render → Environment mein add karo |
+| `GEMINI_MODEL` | (optional) Gemini model override — default `gemini-2.5-flash` hai, aam tor par zaroorat nahi |
+
+**Audio note (2026 update):** Cloudinary ki zaroorat khatam. Saari test audio files website ke
+andar hain (`web/public/audio/`) aur Vercel ke saath hi serve hoti hain. Speaking recordings
+database (MongoDB) mein save hoti hain — Admin Panel → Attempts se play/delete kar sakte ho.
+
+**Seed note:** `node src/seed.js` ab 3 full mock tests + un se bane practice tests
+(listening/reading/speaking) + writing prompts seed karta hai. Code update ke baad aik dafa
+seed dobara chalana — purane users/certificates mehfooz rahte hain.
 
 ## Yaad rakho
 

@@ -32,6 +32,10 @@ export default function Register() {
             value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <Input label="Email" type="email" required
             value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 -mt-2 mb-4">
+            Please use a real email address that you can access — you will need it
+            to recover your account if you ever forget your password.
+          </p>
           <Input label="Password (min 8 characters)" type="password" required minLength={8}
             value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
           {error && <p className="text-sm text-red-600 mb-4">{error}</p>}

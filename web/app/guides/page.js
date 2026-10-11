@@ -60,8 +60,8 @@ const GUIDES = [
     points: [
       'Listening & Reading: 40 questions each. 30 correct ≈ Band 7, 35 correct ≈ Band 8.',
       'Writing & Speaking: marked on 4 criteria, each 25%. Your band is the average.',
-      'Overall band = average of the 4 sections, rounded to the nearest 0.5.',
-      '.25 rounds UP to the next half band; .125 rounds DOWN. (6.25 → 6.5, 6.125 → 6.0)',
+      'Overall band = the average of your 4 section bands, rounded to the nearest half band.',
+      'The rounding rule is simple: an average ending in .25 rounds UP to the next half band (6.25 → 6.5), and an average ending in .75 rounds UP to the next whole band (6.75 → 7.0).',
       'Use our Band Calculator to see exactly what you need in each section.',
     ],
   },

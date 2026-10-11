@@ -8,6 +8,7 @@ function words(s) { return s.trim() ? s.trim().split(/\s+/).length : 0; }
 
 export default function Writing() {
   const router = useRouter();
+  const [authed, setAuthed] = useState(false);
   const [prompts, setPrompts] = useState(null);
   const [tab, setTab] = useState('task2');
   const [promptId, setPromptId] = useState('');
@@ -16,13 +17,18 @@ export default function Writing() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api.get('/auth/me').catch(() => router.push('/login'));
+    // Pehle auth confirm karo — page tab hi render hoga (UI flash nahi hoga)
+    api.get('/auth/me')
+      .then(() => setAuthed(true))
+      .catch(() => router.push('/login'));
     api.get('/writing/prompts').then((d) => {
       setPrompts(d.prompts);
       const first = d.prompts.find((p) => p.taskType === 'task2') || d.prompts[0];
       if (first) { setPromptId(first._id); setTab(first.taskType); }
     }).catch(() => setPrompts([]));
   }, [router]);
+
+  if (!authed) return <p className="text-center py-16">Loading…</p>;
 
   const prompt = (prompts || []).find((p) => p._id === promptId);
   const wc = words(text);

@@ -38,6 +38,11 @@ export default function Login() {
           <a href="/forgot-password" className="text-navy font-semibold hover:underline">Forgot password?</a>
           <a href="/register" className="text-navy font-semibold hover:underline">Create account</a>
         </div>
+        <p className="text-xs text-gray-500 mt-5 text-center">
+          Locked out or registered with the wrong email?{' '}
+          <a href="/contact" className="text-navy font-semibold hover:underline">Contact the admin</a>{' '}
+          for help with your account.
+        </p>
       </div>
     </div>
   );

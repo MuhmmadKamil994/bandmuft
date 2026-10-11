@@ -31,6 +31,15 @@ export default function ForgotPassword() {
             <Button block disabled={busy}>{busy ? 'Sending…' : 'Send reset link'}</Button>
           </form>
         )}
+        <div className="mt-6 rounded-lg bg-paper border border-gray-200 px-4 py-3">
+          <p className="text-sm font-semibold mb-1">No access to that email?</p>
+          <p className="text-sm text-gray-600">
+            If you registered with an email you cannot open, we cannot send a reset
+            link there. <a href="/contact" className="text-navy font-semibold hover:underline">Contact the admin</a> —
+            after verifying your identity, the admin can update your email and reset
+            your password manually.
+          </p>
+        </div>
       </div>
     </div>
   );
