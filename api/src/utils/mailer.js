@@ -11,7 +11,7 @@ function client() {
   return resend;
 }
 
-async function sendMail({ to, subject, html }) {
+async function sendMail({ to, subject, html, replyTo }) {
   const c = client();
   if (!c) {
     console.log(`[mail:dev] to=${to} subject="${subject}"\n${html}`);
@@ -22,6 +22,7 @@ async function sendMail({ to, subject, html }) {
     to,
     subject,
     html,
+    ...(replyTo ? { replyTo } : {}),
   });
 }
 

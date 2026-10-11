@@ -8,6 +8,8 @@ const certSchema = new mongoose.Schema({
   testTitle: String,
   listeningBand: String,
   readingBand: String,
+  writingBand: String,   // full mock par hi hoga
+  speakingBand: String,  // full mock par hi hoga
   overallBand: String,
 }, { timestamps: true });
 

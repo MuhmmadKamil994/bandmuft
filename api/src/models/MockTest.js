@@ -23,16 +23,30 @@ const questionSchema = new mongoose.Schema({
 }, { _id: false });
 
 const sectionSchema = new mongoose.Schema({
-  key: { type: String, enum: ['listening', 'reading'], required: true },
+  key: { type: String, enum: ['listening', 'reading', 'writing', 'speaking'], required: true },
   title: String,
   audioUrl: String,          // listening
   transcript: { type: String, select: false }, // sirf submit ke baad
   passages: [{ title: String, text: String }], // reading
+  // writing section:
+  writing: [{
+    taskType: { type: String, enum: ['task1', 'task2'] },
+    title: String,
+    text: String,
+  }],
+  // speaking section:
+  speaking: {
+    part1: { topic: String, questions: [String] },
+    part2: { cue: String, points: [String] },
+    part3: { topic: String, questions: [String] },
+  },
 }, { _id: false });
 
 const testSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   title: { type: String, required: true },
+  // full = charon skills; warna single-skill practice test
+  kind: { type: String, enum: ['full', 'listening', 'reading', 'writing', 'speaking'], default: 'full' },
   published: { type: Boolean, default: false },
   durationMin: { type: Number, default: 60 },
   sections: [sectionSchema],

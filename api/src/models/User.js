@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   passwordHash: { type: String, required: true, select: false },
   role: { type: String, enum: ['student', 'admin'], default: 'student' },
   isVerified: { type: Boolean, default: false },
+  // Admin ban — true ho to login/session band (data mehfooz rehta hai)
+  banned: { type: Boolean, default: false },
 
   // Email OTP — hashed, 10 min expiry, max 5 tries
   otpHash: { type: String, select: false },

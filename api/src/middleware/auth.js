@@ -38,8 +38,9 @@ async function requireAuth(req, res, next) {
     const token = req.cookies.bm_access;
     if (!token) throw httpError(401, 'Login required');
     const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    const user = await User.findById(payload.sub).select('_id role email name isVerified');
+    const user = await User.findById(payload.sub).select('_id role email name isVerified banned');
     if (!user) throw httpError(401, 'Login required');
+    if (user.banned) throw httpError(403, 'This account has been suspended. Please contact us.');
     req.user = user;
     next();
   } catch (err) {

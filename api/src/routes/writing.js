@@ -7,6 +7,24 @@ const { gradeWriting } = require('../utils/gemini');
 
 const router = express.Router();
 
+// Pending submission ko dobara grade karne ki koshish.
+// Pehle ye system tha hi nahi — aik dafa pending = hamesha pending
+// (aur purana Gemini model band ho chuka tha, is liye result kabhi
+// ata hi nahi tha). Ab model current hai, errors log hote hain, aur
+// user ke dobara dekhne par pending feedback khud retry hota hai.
+async function retryPending(sub) {
+  if (!sub || sub.status !== 'feedback-pending') return sub;
+  const ageMs = Date.now() - new Date(sub.createdAt).getTime();
+  if (ageMs < 60 * 1000) return sub;
+  const fb = await gradeWriting(sub.taskType, sub.prompt, sub.text).catch(() => null);
+  if (fb) {
+    sub.feedback = fb;
+    sub.status = 'feedback-ready';
+    await sub.save();
+  }
+  return sub;
+}
+
 // GET /api/v1/writing/prompts
 router.get('/prompts', async (req, res, next) => {
   try {
@@ -36,7 +54,7 @@ router.post('/submit', requireAuth, async (req, res, next) => {
       status: 'submitted',
     });
 
-    // AI feedback — key nahi to pending (cron/worker baad mein retry kar sakta hai)
+    // AI feedback — fail ho to pending; user ke dobara dekhne par retry hoga
     const fb = await gradeWriting(prompt.taskType, prompt.text, text.trim()).catch(() => null);
     if (fb) {
       sub.feedback = fb;
@@ -53,6 +71,11 @@ router.post('/submit', requireAuth, async (req, res, next) => {
 // GET /api/v1/writing/mine
 router.get('/mine', requireAuth, async (req, res, next) => {
   try {
+    // Sab se purani pending submission ko aik dafa retry karo (quota ke liye aik hi)
+    const pending = await Submission.findOne({ user: req.user._id, status: 'feedback-pending' })
+      .sort({ createdAt: 1 });
+    if (pending) await retryPending(pending);
+
     const subs = await Submission.find({ user: req.user._id })
       .sort({ createdAt: -1 }).select('taskType wordCount status feedback.overall createdAt').lean();
     res.json({ ok: true, submissions: subs });
@@ -62,11 +85,12 @@ router.get('/mine', requireAuth, async (req, res, next) => {
 // GET /api/v1/writing/:id — sirf apni
 router.get('/:id', requireAuth, async (req, res, next) => {
   try {
-    const sub = await Submission.findById(req.params.id).lean();
+    const sub = await Submission.findById(req.params.id);
     if (!sub || sub.user.toString() !== req.user._id.toString()) {
       throw httpError(404, 'Not found');
     }
-    res.json({ ok: true, submission: sub });
+    await retryPending(sub);
+    res.json({ ok: true, submission: sub.toObject() });
   } catch (err) { next(err); }
 });
 

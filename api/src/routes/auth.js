@@ -118,6 +118,9 @@ router.post('/login', loginLimiter, validate(loginSchema), async (req, res, next
     if (!user || !(await user.checkPassword(password))) {
       throw httpError(401, 'Invalid credentials');
     }
+    if (user.banned) {
+      throw httpError(403, 'This account has been suspended. Please contact us.');
+    }
     // OTP verification off hai — isVerified check hataya gaya hai taake
     // purane unverified users bhi atak na jayein.
     setSessionCookies(res, user);
